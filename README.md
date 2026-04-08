@@ -75,13 +75,13 @@ cp agents/geo-lens.md ~/.claude/agents/
 Once installed, in any Claude Code session just say:
 
 ```
-audit GEO for stripe.com
+audit GEO for yoursite.com
 ```
 
 or
 
 ```
-run geo-lens on https://www.example.com
+run geo-lens on https://yoursite.com
 ```
 
 Claude will auto-delegate to the `geo-lens` agent, which:
@@ -95,21 +95,6 @@ Claude will auto-delegate to the `geo-lens` agent, which:
 7. Writes an interactive HTML report to `~/geo-audits/{domain}-{date}.html`
 
 Open the report in any browser — no server, no dependencies.
-
-### Example output
-
-See [`examples/cox.com.html`](examples/cox.com.html) for a live interactive report auditing Cox Communications. Preview of what's in it:
-
-- **Donut score** with letter grade (A–F)
-- **8 category bars** (Crawlability, llms.txt/AI Discovery, Schema, Citability, E-E-A-T, Entity Strength, Technical, Live Citation)
-- **Platform readiness matrix** — ChatGPT vs Perplexity vs Claude vs Gemini vs Google AI Overviews
-- **Top 3 critical fixes** as prominent cards
-- **Interactive Citation Calculator** — tick fixes, watch projected score + citation rate update live, see total effort in hours
-- **Live LLM probe cards** — 8 queries with cited/not-cited pills, cited sources, gap analysis
-- **Hallucinations callout** — factual risks detected in LLM answers
-- **Per-page scorecards** — collapsible table
-- **Copy-paste code templates** — llms.txt, Organization JSON-LD, FAQPage, robots.txt AI-bot block
-- **Methodology footer** with research citations
 
 ---
 
@@ -183,19 +168,6 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
 
-## Prior art / thanks
-
-`geo-lens` stands on the shoulders of excellent prior work:
-
-- [Auriti-Labs/geo-optimizer-skill](https://github.com/Auriti-Labs/geo-optimizer-skill) — 100-pt rubric inspiration, 27-bot matrix
-- [aaron-he-zhu/seo-geo-claude-skills](https://github.com/aaron-he-zhu/seo-geo-claude-skills) — CORE-EEAT + CITE framework
-- [zubair-trabzada/geo-seo-claude](https://github.com/zubair-trabzada/geo-seo-claude) — platform-specific lane weighting
-- [onvoyage-ai/gtm-engineer-skills](https://github.com/onvoyage-ai/gtm-engineer-skills) — framework-specific fix generation
-- [199-biotechnologies/claude-skill-seo-geo-optimizer](https://github.com/199-biotechnologies/claude-skill-seo-geo-optimizer) — per-signal uplift measurements
-
-What `geo-lens` adds: interactive single-file HTML + live Citation Calculator + integrated LLM probing in one Claude-native skill.
-
----
 
 ## Author
 
