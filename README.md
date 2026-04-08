@@ -197,6 +197,10 @@ What `geo-lens` adds: interactive single-file HTML + live Citation Calculator + 
 
 ---
 
+## Author
+
+Created by **Divanshu Goyal** — [@divanshu-techx](https://github.com/divanshu-techx)
+
 ## License
 
-MIT. See [`LICENSE`](LICENSE).
+MIT © Divanshu Goyal. See [`LICENSE`](LICENSE).
