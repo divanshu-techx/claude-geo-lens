@@ -16,7 +16,7 @@ if [[ -f "$SCRIPT_DIR/skills/geo-lens/SKILL.md" ]]; then
 else
   TMP="$(mktemp -d)"
   echo -e "${Y}Cloning geo-lens to $TMP ...${N}"
-  git clone --depth=1 https://github.com/YOUR-USER/geo-lens.git "$TMP"
+  git clone --depth=1 https://github.com/divanshu-techx/claude-geo-lens.git "$TMP"
   SRC="$TMP"
 fi
 
@@ -51,4 +51,4 @@ echo "  3. Bundle appears at: ~/geo-audits/{domain}-{date}/"
 echo "  4. Open report: ${G}open ~/geo-audits/{domain}-{date}/index.html${N}"
 echo "  5. Ship fixes: ${G}~/geo-audits/{domain}-{date}/remediation.md${N}"
 echo ""
-echo -e "${B}Docs:${N} https://github.com/YOUR-USER/geo-lens"
+echo -e "${B}Docs:${N} https://github.com/divanshu-techx/claude-geo-lens"

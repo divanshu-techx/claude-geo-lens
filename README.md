@@ -43,13 +43,13 @@ And most existing GEO audit tools score structurally but **never actually probe 
 ### Option A — one-line install (recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/YOUR-USER/geo-lens/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/divanshu-techx/claude-geo-lens/main/install.sh | bash
 ```
 
 ### Option B — clone and install
 
 ```bash
-git clone https://github.com/YOUR-USER/geo-lens.git
+git clone https://github.com/divanshu-techx/claude-geo-lens.git
 cd geo-lens
 ./install.sh
 ```
