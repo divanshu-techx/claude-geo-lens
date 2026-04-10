@@ -25,13 +25,13 @@ Read {BUNDLE}/raw/_manifest.json
 
 The `live_citation` category in signals.json was left at 0 by geo-measurer. Fill it from `probes.json.live_citation_score` / `live_citation_max`. Recompute `overall_score` and `grade`.
 
-Apply veto gate for hallucinations if `probes.json.hallucinations.length >= 3` → cap at 39.
+Apply veto gate for hallucinations if `probes.json.hallucinations.length >= 3` → cap at 42.
 
 ## Step 3 — Generate index.html
 
 Use the HTML template (inline CSS, inline SVG, tiny vanilla JS). Structure:
 
-1. **Header** — domain, audit date, donut score SVG, letter grade badge
+1. **Header** — domain, audit date, donut score SVG (out of 110), letter grade badge
 2. **Scorecard** — 8 category cards with progress bars (pass coloured classes: `.ok` >70%, `.warn` 40–70%, `.bad` <40%)
 3. **Platform readiness matrix** — 5 horizontal bars for ChatGPT, Perplexity, Claude, Gemini, Google AIO
 4. **Top 3 critical fixes** — pulled from remediation.md CRITICAL section
@@ -39,11 +39,22 @@ Use the HTML template (inline CSS, inline SVG, tiny vanilla JS). Structure:
    - Projected overall score
    - Projected citation rate %
    - Total effort hours / days
-6. **Live LLM evidence** — per-probe cards from probes.json (cited/not-cited pills, cited domains, gap)
+6. **Live LLM evidence** — per-probe cards from probes.json (cited/not-cited pills, cited domains, gap). Now 12 probes.
 7. **Hallucinations** — red callout box if any detected
-8. **Per-page scorecard** — collapsible table from signals.json.pages
-9. **Code templates** — collapsible details for llms.txt, Organization JSON-LD, FAQPage, robots.txt (from remediation.md)
-10. **Methodology footer** — research citations, methodology caveats
+8. **Dark AI Traffic Advisory** — NEW section with amber info box explaining:
+   - 60-70% of ChatGPT traffic hides in GA4 "Direct" bucket (mobile apps strip referrer)
+   - AI traffic converts 5x higher (14.2% vs 2.8% organic) — source: cross-platform conversion studies
+   - GA4 custom channel regex to set up (copy-pasteable)
+   - Recommendation to register on Bing Webmaster Tools for AI Performance Report (citation data + grounding queries)
+   - CDN log monitoring recommendation (Cloudflare AI Crawl Control or equivalent)
+9. **Per-page scorecard** — collapsible table from signals.json.pages
+10. **Code templates** — collapsible details for llms.txt, Organization JSON-LD, FAQPage, HowTo, SpeakableSpecification, hybrid robots.txt (from remediation.md)
+11. **Agentic Readiness Advisory** — NEW forward-looking section:
+    - Google Universal Commerce Protocol (Jan 2026) and OpenAI Agent Commerce Protocol
+    - AI agents will increasingly make purchasing decisions, not just recommendations
+    - Checklist: machine-readable product data, consistent pricing across sources, structured API endpoints
+    - Note: advisory only, not scored (too early for rubric inclusion)
+12. **Methodology footer** — expanded research citations (Princeton KDD 2024, AutoGEO ICLR'26, Kevin Indig 3M-response analysis, Cloudflare crawl studies, Relixir FAQPage study, Digital Bloom AI Visibility Report 2025, a16z GEO analysis), methodology caveats
 
 ### HTML shell (copy this structure)
 
@@ -95,7 +106,7 @@ Use the HTML template (inline CSS, inline SVG, tiny vanilla JS). Structure:
 <header class="hero">
   <div><h1>GEO Audit — {domain}</h1><div class="meta">Audited {date} · {pages} pages · {probes} live probes</div></div>
   <div style="display:flex;align-items:center;gap:18px">
-    <div class="donut" style="--v:{score}"><b>{score}<small>/100</small></b></div>
+    <div class="donut" style="--v:{score_pct}"><b>{score}<small>/110</small></b></div>
     <div class="gradebadge">{grade}</div>
   </div>
 </header>
@@ -113,7 +124,7 @@ Use the HTML template (inline CSS, inline SVG, tiny vanilla JS). Structure:
 </div>
 <script>
 (function(){
-  var BASE_SCORE={score}, BASE_CITE={citation_rate};
+  var BASE_SCORE={score}, BASE_CITE={citation_rate}, MAX_SCORE=110;
   var opps=document.querySelectorAll('#opps input[type=checkbox]');
   var projScore=document.getElementById('projScore');
   var projCite=document.getElementById('projCite');
@@ -124,7 +135,7 @@ Use the HTML template (inline CSS, inline SVG, tiny vanilla JS). Structure:
   function recalc(){
     var s=0,c=0,h=0;
     opps.forEach(function(el){if(el.checked){s+=+el.dataset.score||0;c+=+el.dataset.cite||0;h+=+el.dataset.hours||0;}});
-    var ns=Math.min(100,BASE_SCORE+s);
+    var ns=Math.min(MAX_SCORE,BASE_SCORE+s);
     var nc=Math.min(100,BASE_CITE+c*0.6);
     projScore.textContent=Math.round(ns);
     projCite.textContent=Math.round(nc);
@@ -150,7 +161,7 @@ Short terminal-friendly exec summary:
 ```markdown
 # GEO Audit — {domain}
 
-**Score: {score}/100 ({grade}) · Citation rate: {rate}%**
+**Score: {score}/110 ({grade}) · Citation rate: {rate}%**
 
 ## Top 3 critical fixes
 1. {fix}
@@ -160,12 +171,12 @@ Short terminal-friendly exec summary:
 ## Category scores
 - Crawlability: {n}/18
 - llms.txt & AI Discovery: {n}/12
-- Schema: {n}/14
-- Content Citability: {n}/18
+- Schema: {n}/16
+- Content Citability: {n}/20
 - E-E-A-T: {n}/12
-- Entity Strength: {n}/10
-- Technical: {n}/8
-- Live Citation: {n}/8
+- Entity Strength: {n}/11
+- Technical: {n}/9
+- Live Citation: {n}/10
 
 ## Platform readiness
 - ChatGPT: {n}/100
@@ -175,7 +186,10 @@ Short terminal-friendly exec summary:
 - Google AIO: {n}/100
 
 ## Live LLM probes
-{N}/8 cited the brand. {M} hallucinations flagged.
+{N}/12 cited the brand. {M} hallucinations flagged.
+
+## Dark AI traffic warning
+60-70% of ChatGPT traffic hides in GA4's "Direct" bucket. Set up a custom AI channel group. See report for details.
 
 ## Next step
 Open `{BUNDLE}/index.html` and review `{BUNDLE}/remediation.md`.

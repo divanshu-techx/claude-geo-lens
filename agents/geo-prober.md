@@ -17,20 +17,31 @@ You are **geo-prober**, the Phase 2 live-citation sub-agent of geo-lens. Your on
 
 ## Step 1 — Build query matrix
 
-Generate 8 queries:
+Generate 12 queries (expanded from 8 for better coverage):
 
-1. `best {category} 2026` — **unbranded, hardest**
-2. `{brand} review 2026`
-3. `{brand} vs {competitor_1}`
-4. `what is {brand}`
-5. `{brand} pricing` or `{brand} plans`
-6. `alternatives to {brand}`
-7. `how does {brand} work`
-8. `{brand} customer service reputation`
+**Unbranded (hardest):**
+1. `best {category} 2026` — category leader test
+2. `{category} for {primary_use_case}` — use-case intent (e.g., "CRM for startups")
+
+**Branded — core:**
+3. `{brand} review 2026`
+4. `{brand} vs {competitor_1}`
+5. `{brand} vs {competitor_2}` — second competitor comparison
+6. `what is {brand}`
+7. `{brand} pricing` or `{brand} plans`
+
+**Branded — competitive:**
+8. `alternatives to {brand}`
+9. `is {brand} worth it` — purchase intent query
+
+**Branded — reputation:**
+10. `how does {brand} work`
+11. `{brand} customer service reputation`
+12. `problems with {brand}` — negative sentiment test (catches hallucinated complaints)
 
 ## Step 2 — Run probes IN PARALLEL
 
-Single message, 8 WebSearch calls.
+Single message, 12 WebSearch calls.
 
 ## Step 3 — Parse each result
 
@@ -58,16 +69,18 @@ Flag claims that:
 ## Step 5 — Compute citation rate
 
 ```
-branded_rate = branded_queries_with_citation / 7
-unbranded_rate = (probe 1 cited ? 1 : 0)
-overall_rate = (branded_rate * 7 + unbranded_rate * 1) / 8
+branded_rate = branded_queries_with_citation / 10
+unbranded_rate = unbranded_queries_with_citation / 2
+overall_rate = (branded_rate * 10 + unbranded_rate * 2) / 12
 ```
 
-## Step 6 — Score the Live Citation category (8 pts)
+## Step 6 — Score the Live Citation category (10 pts)
 
-- Brand cited in unbranded query (#1): +3
-- Brand cited in ≥5 branded queries: +3
+- Brand cited in ≥1 unbranded query (#1 or #2): +3
+- Brand cited in ≥1 unbranded query AND ranked in top 3 sources: +1 bonus
+- Brand cited in ≥7 branded queries: +3
 - Zero hallucinations: +2 (−2 per hallucination, floor 0)
+- No negative sentiment hallucinations (probe #12 clean): +1
 
 ## Step 7 — Write probes.json
 
@@ -120,7 +133,7 @@ geo-prober complete
 
 # Quality bar
 
-- **Parallel WebSearch mandatory** — single message, 8 calls.
+- **Parallel WebSearch mandatory** — single message, 12 calls.
 - **Evidence-first hallucination detection.** Every hallucination must cite a specific probe + claim.
 - **No invented citations.** If WebSearch returns no results, record as "unmeasured" not "not cited".
 - **Sentiment is coarse** — don't overclaim nuance.

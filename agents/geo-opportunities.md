@@ -189,6 +189,93 @@ Disallow: /account/
 Disallow: /checkout/
 ```
 
+### `HowTo` JSON-LD (paste into `<head>` of instructional pages)
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "{How to do X}",
+  "step": [
+    {"@type": "HowToStep", "name": "{Step 1 title}", "text": "{Step 1 detail}"},
+    {"@type": "HowToStep", "name": "{Step 2 title}", "text": "{Step 2 detail}"}
+  ]
+}
+</script>
+```
+
+### `SpeakableSpecification` (paste into `<head>` — improves Perplexity/voice citation)
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "cssSelector": [".article-summary", ".faq-answer", "h1", ".tldr"]
+  }
+}
+</script>
+```
+
+### Hybrid `robots.txt` (block training, allow search/retrieval)
+```
+# TRAINING CRAWLERS — block (bulk data collection, no traffic back)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+# SEARCH/RETRIEVAL CRAWLERS — allow (they cite and link back)
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# USER-FACING AGENTS — allow (browsing on behalf of users)
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+Sitemap: {root}/sitemap.xml
+```
+
+### GA4 Custom Channel Setup (QUICK_WIN remediation item)
+```
+GA4 → Admin → Data Display → Channel Groups → Create new group
+Channel name: "AI / LLM Traffic"
+Condition: Source matches regex:
+(chatgpt|openai|anthropic|deepseek|grok)\.com|(gemini|bard)\.google\.com|(perplexity|claude)\.ai|(copilot\.microsoft|edgeservices\.bing)\.com|meta\.ai|you\.com|poe\.com|phind\.com|kagi\.com
+
+CRITICAL: Drag ABOVE "Referral" channel (GA4 uses waterfall matching).
+Also: Register at Bing Webmaster Tools for AI Performance Report (shows citation data + grounding queries).
+```
+
 ### Verification commands
 ```bash
 # Check llms.txt deployed
@@ -200,8 +287,18 @@ curl -sA "GPTBot" {root}/ | grep -A 20 '"@type": "Organization"'
 # Check FAQPage schema
 curl -sA "GPTBot" {page} | grep -A 5 '"@type": "FAQPage"'
 
-# Check robots.txt explicit rules
-curl -s {root}/robots.txt | grep -i "gptbot\|claudebot\|perplexitybot"
+# Check HowTo schema
+curl -sA "GPTBot" {page} | grep -A 10 '"@type": "HowTo"'
+
+# Check SpeakableSpecification
+curl -sA "GPTBot" {page} | grep -A 5 '"SpeakableSpecification"'
+
+# Check robots.txt hybrid rules (training blocked, search allowed)
+curl -s {root}/robots.txt | grep -i "gptbot\|claudebot\|perplexitybot\|OAI-SearchBot"
+
+# Verify search bots can access (should return 200, not 403)
+curl -sA "OAI-SearchBot" -o /dev/null -w "%{http_code}" {root}/
+curl -sA "PerplexityBot" -o /dev/null -w "%{http_code}" {root}/
 ```
 
 ## Step 6 — Return to orchestrator

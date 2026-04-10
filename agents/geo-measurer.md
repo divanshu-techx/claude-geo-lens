@@ -47,15 +47,17 @@ Walk the rubric exactly as defined in `~/.claude/skills/geo-lens/SKILL.md`. Summ
 - `/.well-known/ai.txt`: +1
 - `/ai/summary.json` +1, `/ai/faq.json` +1, `/ai/service.json` +1
 
-### 3. Schema & Structured Data (14 pts)
+### 3. Schema & Structured Data (16 pts)
 - `Organization` with `sameAs` ≥5: +4
 - `WebSite` + `SearchAction`: +2
 - `Article` with author + datePublished + dateModified: +2
 - `FAQPage` present: +3
 - `BreadcrumbList`: +1
 - `Product` + `Offer` on commerce: +2
+- `SpeakableSpecification` on key pages: +1 (improves Perplexity/voice citation — Relixir 2025)
+- `HowTo` schema on instructional content: +1 (maps to AIO step citations)
 
-### 4. Content Citability (18 pts) — Princeton KDD 2024
+### 4. Content Citability (20 pts) — Princeton KDD 2024 + Kevin Indig citation analysis
 - Citation density ≥1/500w (+30–40% lift): +5
 - Quotation presence ≥1/1000w (+30–35%): +4
 - Statistic density ≥1/200w (+30–37%): +4
@@ -65,6 +67,8 @@ Walk the rubric exactly as defined in `~/.claude/skills/geo-lens/SKILL.md`. Summ
 - TL;DR in first 60w of long articles: +1
 - Voice-answer chunks ≤29w: +1 (cap)
 - Flesch-Kincaid 6–8: +1
+- **Table presence** ≥1 data table with `<thead>`/`<th>` on content pages: +2 (tables increase citation rate 2.5x vs prose — multiple GEO studies)
+- **Front-loading score**: ≥50% of statistics/citations/key claims in first 30% of body: +1 (Kevin Indig: 44% of ChatGPT citations come from first 30% of content, 3M response analysis)
 
 ### 5. E-E-A-T (12 pts)
 - Author byline + Person schema + ≥30w bio + credentials: +4
@@ -73,15 +77,16 @@ Walk the rubric exactly as defined in `~/.claude/skills/geo-lens/SKILL.md`. Summ
 - Outbound citations to .edu/.gov: +2
 - First-party data markers: +2
 
-### 6. Entity Strength (10 pts)
+### 6. Entity Strength (11 pts)
 - Organization schema depth (founding/address/parent/logo): +3
 - Wikipedia + `sameAs` linked: +2
 - Wikidata Q-ID: +1
 - 11-platform brand mention scan (≥3 mentions): up to +2
+- **Reddit OR YouTube presence**: +1 bonus (Reddit is Perplexity's #1 source at 6.6% of citations; YouTube is strongest AIO correlation factor — Digital Bloom 2025)
 - Brand-search SERP coherence: +1
 - Knowledge graph panel: +1
 
-### 7. Technical Foundations (8 pts)
+### 7. Technical Foundations (9 pts)
 - Canonical: +1
 - HTTPS + HSTS: +1
 - OG tags complete: +1
@@ -89,9 +94,12 @@ Walk the rubric exactly as defined in `~/.claude/skills/geo-lens/SKILL.md`. Summ
 - Internal linking ≥5 descriptive per page: +1
 - RSS/Atom: +1
 - h1 hierarchy: +1
+- **Video transcript availability**: +1 (pages with `<video>` or YouTube/Vimeo `<iframe>` must have transcript/`<track>` element — LLMs cannot watch video, only read transcripts)
 
-### 8. Live LLM Citation (8 pts — placeholder, filled by geo-prober via merge)
+### 8. Live LLM Citation (10 pts — placeholder, filled by geo-prober via merge)
 Leave this at 0 in your signals.json; the reporter will merge with probes.json.
+
+**Total rubric: 110 points.** Grade bands: A 90–110 · B 72–89 · C 54–71 · D 38–53 · F 0–37
 
 ## Step 4 — Veto gates
 
@@ -101,17 +109,17 @@ Check:
 - (≥3 hallucinations comes from probes.json, reporter will apply)
 - Zero JSON-LD AND no /llms.txt AND no Wikipedia → veto
 
-If any veto, cap total score at 39.
+If any veto, cap total score at 42.
 
 ## Step 5 — Platform lanes
 
 Compute 0–100 readiness scores for each lane, based on the lane-specific priority signals:
 
-- **ChatGPT**: long-form word count avg, author credentials, citation density, Article schema coverage
-- **Perplexity**: freshness distribution, inline citations, primary source ratio, sameAs depth
-- **Claude**: methodology/limitations presence, Q&A structure, FAQPage coverage
-- **Gemini**: LocalBusiness schema, NAP consistency, GMB presence (inferred)
-- **Google AIO**: tables count, FAQPage+HowTo coverage, featured-snippet passage ratio, BreadcrumbList
+- **ChatGPT**: long-form word count avg, author credentials, citation density, Article schema coverage, Wikipedia/Wikidata linkage (47.9% of top-10 citations from Wikipedia), Bing indexation signal
+- **Perplexity**: freshness distribution, inline citations, primary source ratio, sameAs depth, Reddit presence (#1 source at 6.6% of citations), SpeakableSpecification schema
+- **Claude**: methodology/limitations presence, Q&A structure, FAQPage coverage, long-form structured content, clean HTML hierarchy
+- **Gemini**: LocalBusiness schema, NAP consistency, GMB presence (inferred), first-party content strength
+- **Google AIO**: table count + structure (2.5x citation lift), FAQPage+HowTo coverage, featured-snippet passage ratio, BreadcrumbList, front-loading of key claims
 
 ## Step 6 — Write signals.json
 

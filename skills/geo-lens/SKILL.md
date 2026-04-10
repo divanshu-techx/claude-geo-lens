@@ -7,6 +7,8 @@ description: Multi-agent Lighthouse-style Generative Engine Optimisation (GEO) a
 
 Lighthouse for LLM search, architected as a multi-agent workflow. You are the **orchestrator** — your job is to dispatch sub-agents in parallel, then assemble their outputs into a single audit bundle.
 
+**Rubric: 110 points across 8 categories, 70+ measurable signals, 12 live LLM probes.**
+
 ## Architecture
 
 ```
@@ -95,18 +97,18 @@ Print to user:
 
 ### 1. Crawlability (18) — AI-bot access + SSR
 ### 2. llms.txt & AI Discovery (12) — discovery files
-### 3. Schema & Structured Data (14) — JSON-LD allowlist
-### 4. Content Citability (18) — Princeton KDD 2024 signals (cite/quote/stat density, 134–167w windows, TL;DR, voice chunks, Flesch-Kincaid, keyword-stuff penalty)
+### 3. Schema & Structured Data (16) — JSON-LD allowlist + SpeakableSpecification + HowTo
+### 4. Content Citability (20) — Princeton KDD 2024 signals + table detection (2.5x citation lift) + front-loading score (Kevin Indig: 44% of citations from first 30% of content)
 ### 5. E-E-A-T / Credibility (12) — author credentials, freshness, primary sources
-### 6. Entity Strength (10) — Org schema + 11-platform brand mention scan
-### 7. Technical Foundations (8) — canonical, OG, alt, linking, RSS
-### 8. Live LLM Citation (8) — 8 probes
+### 6. Entity Strength (11) — Org schema + 11-platform brand mention scan + Reddit/YouTube weighted presence
+### 7. Technical Foundations (9) — canonical, OG, alt, linking, RSS, video transcript detection
+### 8. Live LLM Citation (10) — 12 probes (expanded from 8)
 
-**Veto gates** (cap at 39): all AI bots blocked, site-wide noai headers, ≥3 hallucinations, zero structured data + no Wikipedia.
+**Veto gates** (cap at 42): all AI bots blocked, site-wide noai headers, ≥3 hallucinations, zero structured data + no Wikipedia.
 
-**Grade bands**: A 86–100 · B 68–85 · C 51–67 · D 36–50 · F 0–35
+**Grade bands**: A 90–110 · B 72–89 · C 54–71 · D 38–53 · F 0–37
 
-Research citations: Aggarwal et al. 2024 (arXiv 2311.09735), AutoGEO ICLR'26, llmstxt.org, schema.org.
+Research citations: Aggarwal et al. 2024 (arXiv 2311.09735), AutoGEO ICLR'26, llmstxt.org, schema.org, Kevin Indig citation analysis (3M ChatGPT responses), Cloudflare crawl-to-click studies, Relixir FAQPage study (July 2025), Digital Bloom AI Visibility Report 2025, a16z "How GEO Rewrites the Rules of Search".
 
 (Sub-agent files in `~/.claude/agents/geo-*.md` hold the full rubric detail.)
 
@@ -123,11 +125,11 @@ Scored on top of the base rubric, because only ~11% of domains are cited by both
 
 | Lane | Priority signals |
 |---|---|
-| **ChatGPT** | long-form 1500–2500w, credentialed authors, citation density, Article schema |
-| **Perplexity** | weekly dateModified, inline citations, primary sources, sameAs |
-| **Claude** | methodology, limitations/tradeoff sections, Q&A structure, FAQPage |
-| **Gemini** | local NAP, LocalBusiness schema, Google Business Profile |
-| **Google AIO** | tables, FAQPage + HowTo, featured-snippet passages, BreadcrumbList |
+| **ChatGPT** | long-form 1500–2500w, credentialed authors, citation density, Article schema, Wikipedia presence (47.9% of top-10 citations), Bing indexation |
+| **Perplexity** | weekly dateModified, inline citations, primary sources, sameAs, Reddit presence (#1 source, 6.6% of citations), SpeakableSpecification |
+| **Claude** | methodology, limitations/tradeoff sections, Q&A structure, FAQPage, long-form structured content |
+| **Gemini** | local NAP, LocalBusiness schema, Google Business Profile, first-party content priority |
+| **Google AIO** | tables (2.5x citation lift), FAQPage + HowTo, featured-snippet passages, BreadcrumbList, query fan-out awareness |
 
 ## Failure modes
 
